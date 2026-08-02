@@ -154,8 +154,9 @@ export function ContactSection() {
             © Designed by Akmal, powered by too much coffee ☕
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <SocialLink href="https://linkedin.com" label="Linkedin" />
-            <SocialLink href="https://dribbble.com" label="Dribbble" />
+            <SocialLink href="mailto:akmalsbq@gmail.com" label="Mail" />
+            <SocialLink href="https://www.linkedin.com/in/akmalsbq/" label="Linkedin" />
+            <SocialLink href="https://dribbble.com/akmalsbq" label="Dribbble" />
           </div>
         </div>
       </div>
