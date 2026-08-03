@@ -20,7 +20,18 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    figmaSiteConfiguration({}),
+    figmaSiteConfiguration({
+      title: 'Akmal Sabiq | UI/UX Designer',
+      description:
+        'UI/UX Designer with 5+ years of experience designing apps, websites, and SaaS products.',
+      language: 'en',
+      icons: {
+        icon: '/favicon.svg',
+      },
+      openGraph: {
+        image: '/og-image.png',
+      },
+    }),,
     figmaErrorOverlayReplay(),
     figmaReactRefreshBoundaryFallback(),
     figmaMakeKitPlugin({ storiesGlob: '/src/**/*.stories.{ts,tsx,js,jsx}' }),
