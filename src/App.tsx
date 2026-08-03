@@ -6,6 +6,7 @@ import { ProjectCard } from './components/ProjectCard'
 import { ContactSection } from './components/ContactSection'
 import imgOCA from '../assets/thumbnail-oca.png'
 import imgDesignSystem from '../assets/thumbnail-designsystem.png'
+import { AboutSection } from './components/about'
 
 
 const PROJECTS = [
@@ -93,7 +94,6 @@ function SelectedWorksHeader() {
       }}
     >
       <div
-        id="work"
         style={{
           maxWidth: 1280,
           margin: '0 auto',
@@ -161,6 +161,7 @@ export default function App() {
       {PROJECTS.map((project, i) => (
         <ProjectCard
           key={i}
+          id={i === 0 ? 'work' : undefined}
           company={project.company}
           title={project.title}
           thumbnail={project.thumbnail}
@@ -169,6 +170,10 @@ export default function App() {
           delay={i * 80}
         />
       ))}
+
+      <Divider />
+
+      <AboutSection />
 
       <Divider />
 

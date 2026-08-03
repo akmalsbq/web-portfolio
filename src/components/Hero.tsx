@@ -21,7 +21,6 @@ export function Hero() {
 
   return (
     <section
-      id="about"
       style={{
         width: '100%',
         minHeight: '100vh',

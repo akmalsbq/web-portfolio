@@ -14,6 +14,7 @@ interface ProjectCardProps {
   thumbnail: string
   href?: string
   delay?: number
+  id?: string
 }
 
 const ArrowRight = () => (
@@ -25,7 +26,7 @@ const ArrowRight = () => (
   </svg>
 )
 
-export function ProjectCard({ company, title, meta, thumbnail, href, delay = 0 }: ProjectCardProps) {
+export function ProjectCard({ company, title, meta, thumbnail, href, delay = 0, id }: ProjectCardProps) {
   const navigate = useNavigate()
   const { ref, inView } = useInView(0.08)
   const [btnHovered, setBtnHovered] = useState(false)
@@ -33,6 +34,7 @@ export function ProjectCard({ company, title, meta, thumbnail, href, delay = 0 }
 
   return (
     <section
+      id={id}
       ref={ref as React.RefObject<HTMLElement>}
       style={{
         width: '100%',

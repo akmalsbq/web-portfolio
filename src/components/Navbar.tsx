@@ -4,9 +4,34 @@ import logo from '../imports/HomeLight-5/Logo.svg'
 const NAV_ITEMS = [
   { label: 'Work', href: '/#work' },
   { label: 'About', href: '/#about' },
-  { label: 'Process', href: '/#process' },
-  { label: 'Contact', href: '/#contact' },
+  //{ label: 'Process', href: '/#process' },
+  { label: 'Contact', href: 'mailto:akmalsbq@gmail.com' },
 ]
+
+function scrollToSection(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function handleNavClick(
+  e: React.MouseEvent<HTMLAnchorElement>,
+  href: string,
+  onNavigate?: () => void,
+) {
+  const hashIndex = href.indexOf('#')
+  if (hashIndex === -1) return
+
+  const id = href.slice(hashIndex + 1)
+  const onHome = window.location.pathname === '/'
+
+  if (onHome) {
+    e.preventDefault()
+    scrollToSection(id)
+    window.history.pushState(null, '', `/#${id}`)
+    onNavigate?.()
+  } else {
+    onNavigate?.()
+  }
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -32,9 +57,23 @@ export function Navbar() {
         left: 0,
         right: 0,
         zIndex: 50,
-        backgroundColor: scrolled ? 'rgba(254,254,254,0.92)' : '#fefefe',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
+        backgroundColor: menuOpen
+        ? '#FEFEFE'
+        : scrolled
+          ? 'rgba(254,254,254,0.92)'
+          : '#FEFEFE',
+      
+        backdropFilter: menuOpen
+          ? 'none'
+          : scrolled
+            ? 'blur(12px)'
+            : 'none',
+        
+        WebkitBackdropFilter: menuOpen
+          ? 'none'
+          : scrolled
+            ? 'blur(12px)'
+            : 'none',
         borderBottom: '1px solid #e1e3e4',
         transition: 'background-color 0.25s ease, backdrop-filter 0.25s ease',
       }}
@@ -101,6 +140,7 @@ export function Navbar() {
               )}
               <a
                 href={item.href}
+                onClick={e => handleNavClick(e, item.href)}
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 600,
@@ -128,83 +168,159 @@ export function Navbar() {
           style={{
             display: 'none',
             flexDirection: 'column',
+            justifyContent: 'center',
             gap: 5,
+            width: 40,
+            height: 40,
             padding: 8,
             background: 'none',
             border: 'none',
             cursor: 'pointer',
           }}
-          className="show-mobile"
+          className="show-mobile nav-hamburger"
         >
           {[0, 1, 2].map(i => (
             <span
               key={i}
-              style={{
-                display: 'block',
-                width: 24,
-                height: 2,
-                backgroundColor: '#2b2f32',
-                borderRadius: 1,
-                transition: 'transform 0.2s ease, opacity 0.2s ease',
-                transform:
-                  menuOpen
-                    ? i === 0
-                      ? 'rotate(45deg) translate(5px, 5px)'
-                      : i === 2
-                        ? 'rotate(-45deg) translate(5px, -5px)'
-                        : 'scaleX(0)'
-                    : 'none',
-                opacity: menuOpen && i === 1 ? 0 : 1,
-              }}
+              className={`nav-hamburger__line${menuOpen ? ' nav-hamburger__line--open' : ''}`}
+              data-line={i}
             />
           ))}
         </button>
       </div>
 
-      {/* Mobile dropdown */}
+      {/* Mobile fullscreen menu — kept mounted for enter/exit animation */}
       <div
-        style={{
-          maxHeight: menuOpen ? 400 : 0,
-          overflow: 'hidden',
-          transition: 'max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-          borderTop: menuOpen ? '1px solid #e1e3e4' : 'none',
-          backgroundColor: 'rgba(254,254,254,0.97)',
-          backdropFilter: 'blur(12px)',
-        }}
-        className="show-mobile"
+        className={`mobile-menu show-mobile${menuOpen ? ' mobile-menu--open' : ''}`}
+        aria-hidden={!menuOpen}
+        inert={menuOpen ? undefined : true}
       >
-        {NAV_ITEMS.map(item => (
-          <a
-            key={item.href}
-            href={item.href}
-            onClick={() => setMenuOpen(false)}
-            style={{
-              display: 'block',
-              padding: '16px 40px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600,
-              fontSize: 14,
-              color: '#2b2f32',
-              textDecoration: 'none',
-              borderBottom: '1px solid #e1e3e4',
-              transition: 'background-color 0.15s ease',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(225,227,228,0.5)')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-          >
-            {item.label}
-          </a>
-        ))}
+        <nav aria-label="Mobile navigation" className="mobile-menu__nav">
+          {NAV_ITEMS.map((item, index) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="mobile-menu__link"
+              style={{ ['--menu-index' as string]: index }}
+              tabIndex={menuOpen ? 0 : -1}
+              onClick={e => handleNavClick(e, item.href, () => setMenuOpen(false))}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
       </div>
 
       <style>{`
         @media (min-width: 768px) {
           .hidden-mobile { display: flex !important; }
           .show-mobile { display: none !important; }
+          .mobile-menu { display: none !important; }
         }
         @media (max-width: 767px) {
           .hidden-mobile { display: none !important; }
           .show-mobile { display: flex !important; }
+        }
+
+        .nav-hamburger__line {
+          display: block;
+          width: 24px;
+          height: 2px;
+          background-color: #2b2f32;
+          border-radius: 1px;
+          transform-origin: center;
+          transition:
+            transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-hamburger__line[data-line="0"].nav-hamburger__line--open {
+          transform: translateY(7px) rotate(45deg);
+        }
+
+        .nav-hamburger__line[data-line="1"].nav-hamburger__line--open {
+          opacity: 0;
+          transform: scaleX(0);
+        }
+
+        .nav-hamburger__line[data-line="2"].nav-hamburger__line--open {
+          transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .mobile-menu {
+          position: fixed;
+          top: 88px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 49;
+          flex-direction: column;
+          background-color: #fefefe;
+          padding: 40px;
+          overflow-y: auto;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-12px);
+          pointer-events: none;
+          transition:
+            opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+            visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-menu--open {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+          pointer-events: auto;
+        }
+
+        .mobile-menu__nav {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .mobile-menu__link {
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 700;
+          font-size: 36px;
+          line-height: 44px;
+          color: #2b2f32;
+          text-decoration: none;
+          opacity: 0;
+          transform: translate3d(0, 20px, 0);
+          transition:
+            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+            color 0.15s ease;
+          transition-delay: calc(var(--menu-index, 0) * 55ms);
+        }
+
+        .mobile-menu--open .mobile-menu__link {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+
+        .mobile-menu__link:active {
+          color: #6c757d;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .nav-hamburger__line,
+          .mobile-menu,
+          .mobile-menu__link {
+            transition: none !important;
+          }
+
+          .mobile-menu {
+            transform: none;
+          }
+
+          .mobile-menu__link {
+            opacity: 1;
+            transform: none;
+          }
         }
       `}</style>
     </header>

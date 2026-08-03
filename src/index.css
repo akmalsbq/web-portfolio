@@ -88,6 +88,12 @@ html {
   scroll-behavior: smooth;
 }
 
+#work,
+#about,
+#contact {
+  scroll-margin-top: 88px;
+}
+
 body {
   font-family: 'DM Sans', sans-serif;
   background-color: #FEFEFE;
