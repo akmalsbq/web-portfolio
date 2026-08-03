@@ -137,7 +137,7 @@ function ResumeLink() {
 
   return (
     <a
-      href="#"
+      href="https://drive.google.com/file/d/1M2Xoi9d33fkpLfzUbFx1nnad0lwQ7Sct/view?usp=sharing"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
